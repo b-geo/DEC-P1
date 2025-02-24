@@ -1,0 +1,3 @@
+- get csv of player rankings for last round of 2024 season
+- get game results for r24 from csv (https://www.footywire.com/)
+- get ladder results from end of r24 from csv (https://www.footywire.com/)
