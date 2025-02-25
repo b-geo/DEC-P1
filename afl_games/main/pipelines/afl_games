@@ -1,0 +1,52 @@
+from dotenv import load_dotenv
+import os
+from sqlalchemy.engine import URL, Engine
+from sqlalchemy import create_engine, Table, MetaData, Column, inspect, Integer, String
+from sqlalchemy.dialects import postgresql
+from jinja2 import Environment, FileSystemLoader, Template
+from graphlib import TopologicalSorter
+
+# would be in piplines
+def get_schema_metadata(engine: Engine) -> Table:
+    metadata = MetaData(bind=engine)
+    metadata.reflect()  # get target table schemas into metadata object
+    return metadata
+
+TARGET_DATABASE_NAME = os.environ.get("TARGET_DATABASE_NAME")
+TARGET_SERVER_NAME = os.environ.get("TARGET_SERVER_NAME")
+TARGET_DB_USERNAME = os.environ.get("TARGET_DB_USERNAME")
+TARGET_DB_PASSWORD = os.environ.get("TARGET_DB_PASSWORD")
+TARGET_PORT = os.environ.get("TARGET_PORT")
+
+target_connection_url = URL.create(
+    drivername="postgresql+pg8000",
+    username=TARGET_DB_USERNAME,
+    password=TARGET_DB_PASSWORD,
+    host=TARGET_SERVER_NAME,
+    port=TARGET_PORT,
+    database=TARGET_DATABASE_NAME,
+)
+target_engine = create_engine(target_connection_url)
+target_metadata = get_schema_metadata(engine=target_engine)
+
+    # dag = TopologicalSorter()
+    # dag.add(staging_films)
+    # dag.add(serving_sales_customer)
+    # dag.add(serving_films_popular, staging_films)
+    # dag.add(serving_sales_film, staging_films)
+
+    # for node in tuple(dag.static_order()):
+    #     node.create_table_as()
+metadata = MetaData()
+table = Table(
+"games",
+metadata,
+Column("game_id", Integer, primary_key=True),
+Column("game_data_updated", String),
+Column("game_time", String),
+Column("home_team", String),
+Column("away_team", String),
+Column("round", Integer)
+)
+
+# specify 

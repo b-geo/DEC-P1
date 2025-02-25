@@ -7,10 +7,17 @@ minor transformations to column names, unix time to normal time
 load three tables
 query those three tables using jinja to then produce a data warehouse
 
+get games incomplete?
+won't be any incremental extract from db
+
+# ULTIMATELY OFFERING A VIEW OF GAMES FOR THE ROUND
+
 **lil tricks i've done/ what i've learnt**
 - _variable_name for internal values
 - docstring generator, docstring for top of module
 - doing it properly takes a lot longer!
+- upsert games and odds since game_id for both. overwrite player rankings (need only active players)
+- have made extract full only for postgres extract
 
 
 assets
@@ -38,3 +45,5 @@ pipeline
 - when to pass round number, year - get current round?
 - if loading multiple csv should they be a connector?
 - is there another folder format that is as good?
+- when to pass in year and round ?
+- incremental extract do i need to hold most recent value?
