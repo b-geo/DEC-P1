@@ -1,55 +1,60 @@
-"""
-- extract via both APIs
-- transform in pandas
-- upload to db
-
-- if _main_
-- doc strings
-- type hints
-
-- using GIT
-- google"s python style guide
-- navigate using keyboard 
-    - crtl + arrow for moving between words
-    - alt up or down to move line up or down
-    - ctrl enter to insert line below 
-    - ctrl tab between working files
-    - ctrl end to end of file
-- separate into objects
-- separate into files
-
-- log
-- unit test
-- schedule
-"""
+import datetime
+from main.connectors.squiggle_api import SquiggleApiClient
+from main.connectors.postgresql import PostgreSqlClient
+from main.assets.load import load_to_postgres
+from main.assets.extract import extract_games, extract_odds, extract_player_rankings, extract_postgres
+from main.assets.transform import transform_games, transform_odds, transform_player_rankings
+from dotenv import load_dotenv
 import os
-import dotenv
-from extract.odds import extract as odds_api
+from sqlalchemy import create_engine, Table, MetaData, Column, Integer, String
+from sqlalchemy.engine import Engine
+from jinja2 import Environment, Template, FileSystemLoader
 
-# team names odds api : squiggle api
-name_dict = {"Adelaide Crows": "Adelaide",
-            "Brisbane Lions": "Brisbane Lions",
-            "Carlton Blues": "Carlton",
-            "Collingwood Magpies": "Collingwood",
-            "Essendon Bombers": "Essendon",
-            "Fremantle Dockers": "Fremantle",
-            "Geelong Cats": "Geelong",
-            "Gold Coast Suns": "Gold Coast",
-            "Greater Western Sydney Giants":
-            "Greater Western Sydney",
-            "Hawthorn Hawks": "Hawthorn",
-            "Melbourne Demons": "Melbourne",
-            "North Melbourne Kangaroos":"North Melbourne",
-            "Port Adelaide Power": "Port Adelaide",
-            "Richmond Tigers": "Richmond",
-            "St Kilda Saints": "St Kilda",
-            "Sydney Swans": "Sydney",
-            "West Coast Eagles": "West Coast",
-            "Western Bulldogs": "Western Bulldogs"
-            }
+# from dotenv import load_dotenv
+# import os
+# import yaml
+# from pathlib import Path
+# import schedule
+# import time
+# from importlib import import_module
+
+this_year = datetime.date.today().year
+
+print(this_year)
 
 
-if __name__ == "__main__":
-    dotenv.load_dotenv()
-    ODDS_API_KEY = os.environ.get("ODDS_API_KEY")
-    odds_data = odds_api(ODDS_API_KEY)
+a = SquiggleApiClient("brody1geroge@gmail.com")
+b = extract_games(a,this_year)
+c = transform_games(b)
+# # b = b.loc[b['complete'] == 0]
+# current_round = b["round"].iloc[0]
+# print(extract_odds(a,this_year,current_round))
+
+# print(transform_player_rankings(extract_player_rankings("./main/data/raw/2024-r24-player_rankings.csv")))
+load_dotenv()
+
+TARGET_DATABASE_NAME = os.environ.get("TARGET_DATABASE_NAME")
+TARGET_SERVER_NAME = os.environ.get("TARGET_SERVER_NAME")
+TARGET_DB_USERNAME = os.environ.get("TARGET_DB_USERNAME")
+TARGET_DB_PASSWORD = os.environ.get("TARGET_DB_PASSWORD")
+TARGET_PORT = os.environ.get("TARGET_PORT")
+
+metadata = MetaData()
+table = Table(
+"games",
+metadata,
+Column("game_id", Integer, primary_key=True),
+Column("game_data_updated", String),
+Column("game_time", String),
+Column("home_team", String),
+Column("away_team", String),
+Column("round", Integer)
+)
+
+client = PostgreSqlClient(TARGET_SERVER_NAME, TARGET_DATABASE_NAME, TARGET_DB_USERNAME, TARGET_DB_PASSWORD, TARGET_PORT)
+load_to_postgres(c,client, table, metadata)
+
+environment = Environment(loader=FileSystemLoader("./main/assets/sql/extract"))
+for sql_path in environment.list_templates():
+    sql_template = environment.get_template(sql_path)
+    print(extract_postgres(sql_template=sql_template,engine=client.engine,where="round = 0"))
