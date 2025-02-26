@@ -1,0 +1,15 @@
+2025-02-26T19:33:15.259182+0800 | INFO | Creating source client for postgres database.
+2025-02-26T19:33:15.278722+0800 | INFO | Creating target client for postgres database.
+2025-02-26T19:33:15.278722+0800 | INFO | Creating Squiggle API client.
+2025-02-26T19:33:15.278722+0800 | INFO | Extracting games data for season 2025.
+2025-02-26T19:33:16.226528+0800 | INFO | Transforming games data.
+2025-02-26T19:33:16.228529+0800 | INFO | Extracting odds data for season 2025, round 0.
+2025-02-26T19:33:16.501998+0800 | INFO | Transforming odds data.
+2025-02-26T19:33:16.501998+0800 | INFO | Extracting player fantasy scoring data.
+2025-02-26T19:33:16.505521+0800 | INFO | Transforming player fantasy data to group by team.
+2025-02-26T19:33:16.506525+0800 | INFO | Loading games data to postgres.
+2025-02-26T19:33:16.722207+0800 | INFO | Loading odds data to postgres.
+2025-02-26T19:33:16.733559+0800 | INFO | Loading team fantasy data to postgres.
+2025-02-26T19:33:16.735582+0800 | INFO | Getting SQL files from sql/extract.
+2025-02-26T19:33:16.736582+0800 | INFO | Extracting summary query data from postgres.
+2025-02-26T19:33:16.931742+0800 | INFO | Loading team fantasy data to postgres.

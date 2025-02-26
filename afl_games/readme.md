@@ -44,6 +44,7 @@ pipeline
 - is logging to file and db normal?
 - jonathon had mentioned log guru instead of logging
     - do we use that and is metadata logging required?
+- do we need to use dag? not gonna do a dag unless i have to
 
 **holds games for season**
 EXTRACT
@@ -63,3 +64,4 @@ LOAD
 - logging
 - aws and 
 - documentation
+
