@@ -37,7 +37,7 @@ class SquiggleApiClient:
                 f"Failed to extract games from Squiggle API. Status Code: {response.status_code}. Response: {response.text}"
             )
     def get_odds(self, year: str, round: str) -> dict:
-        """Fetches odds for a specific season (year) and round.
+        """Fetches odds for a specific season (year) and round for games not yet complete.
 
         Args:
             year (str, required)
@@ -49,7 +49,7 @@ class SquiggleApiClient:
         Returns:
             dict:  _description_ Returns the API response as JSON. Format: {"games": [{game details}]}
         """
-        params = {"q": "tips", "year": year, "round": round, "source": "5"}
+        params = {"q": "tips", "year": year, "round": round, "source": "5", "complete": "!100"}
         headers = {"User-Agent": self._user_agent}
         response = requests.get(self._base_url,params = params, headers= headers)
         if response.status_code == 200:

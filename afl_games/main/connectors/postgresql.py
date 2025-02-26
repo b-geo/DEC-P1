@@ -68,7 +68,7 @@ class PostgreSqlClient:
         Gets the table schema and metadata
         """
         metadata = self.get_metadata()
-        return metadata.tables[table_name], metadata
+        return metadata.tables[table_name]
 
     def table_exists(self, table_name: str) -> bool:
         """

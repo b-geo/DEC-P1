@@ -7,11 +7,11 @@ class PostgresSqlLoader:
                  postgresql_client: PostgreSqlClient
                  ):
         self.client = postgresql_client
-        self.metadata = MetaData()
     def _load(
         self,
         df: pd.DataFrame,
         table: Table,
+        metadata: MetaData,
         load_method: str = "overwrite",
     ) -> None:
         """
@@ -28,24 +28,25 @@ class PostgresSqlLoader:
         """
         if load_method == "insert":
             self.client.insert(
-                data=df.to_dict(orient="records"), table=table, metadata=self.metadata
+                data=df.to_dict(orient="records"), table=table, metadata=metadata
             )
         elif load_method == "upsert":
             self.client.upsert(
-                data=df.to_dict(orient="records"), table=table, metadata=self.metadata
+                data=df.to_dict(orient="records"), table=table, metadata=metadata
             )
         elif load_method == "overwrite":
             self.client.overwrite(
-                data=df.to_dict(orient="records"), table=table, metadata=self.metadata
+                data=df.to_dict(orient="records"), table=table, metadata=metadata
             )
         else:
             raise Exception(
                 "Please specify a correct load method: [insert, upsert, overwrite]"
             )
     def load_games(self, df: pd.DataFrame, load_method: str = "upsert") -> None:
+        metadata= MetaData()
         games_table = Table(
             "games",
-            self.metadata,
+            metadata,
             Column("game_id", Integer, primary_key=True),
             Column("game_data_updated", String),
             Column("game_time", String),
@@ -57,12 +58,14 @@ class PostgresSqlLoader:
         self._load(
             df=df,
             table=games_table,
+            metadata=metadata,
             load_method=load_method
         )
     def load_odds(self, df: pd.DataFrame, load_method: str = "overwrite") -> None:
+        metadata= MetaData()
         odds_table = Table(
             "odds",
-            self.metadata,
+            metadata,
             Column("game_id", Integer, primary_key=True),
             Column("odds_data_updated", String),
             Column("tip", String),
@@ -72,24 +75,28 @@ class PostgresSqlLoader:
         self._load(
             df=df,
             table=odds_table,
+            metadata=metadata,
             load_method=load_method
         )
     def load_team_fantasy(self, df: pd.DataFrame, load_method: str = "overwrite") -> None:
+        metadata= MetaData()
         team_fantasy_table = Table(
             "team_fantasy",
-            self.metadata,
+            metadata,
             Column("team", String, primary_key=True),
             Column("team_fantasy_score", Integer)
         )
         self._load(
             df=df,
             table=team_fantasy_table,
+            metadata=metadata,
             load_method=load_method
         )
     def load_summary(self, df: pd.DataFrame, load_method: str = "overwrite") -> None:
+        metadata= MetaData()
         summary_table = Table(
             "summary",
-            self.metadata,
+            metadata,
             Column("game_id", Integer, primary_key=True),
             Column("game_time", String),
             Column("round", Integer),
@@ -104,6 +111,7 @@ class PostgresSqlLoader:
         self._load(
             df=df,
             table=summary_table,
+            metadata=metadata,
             load_method=load_method
         )
 
