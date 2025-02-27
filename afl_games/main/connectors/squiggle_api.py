@@ -1,4 +1,5 @@
 import requests
+from main.assets.exceptions import ResponseIsEmpty
 
 class SquiggleApiClient:
     """ _summary_ A client to get AFL betting odds and games details from Squiggle.
@@ -15,11 +16,11 @@ class SquiggleApiClient:
         if user_agent is None:
             raise Exception("User Agent for headers cannot be set to None.")
         self._user_agent = user_agent
-    def get_games(self, year: str) -> dict:
+    def get_games(self, year: int) -> dict:
         """Fetches games for a specific season (year).
 
         Args:
-            year (str, required)
+            year (int, required)
 
         Raises:
             Exception:  _description_: Response was a status other than 200.
@@ -31,12 +32,15 @@ class SquiggleApiClient:
         headers = {"User-Agent": self._user_agent}
         response = requests.get(self._base_url,params = params, headers= headers)
         if response.status_code == 200:
+            json = response.json()
+            if len(json) == 0:
+                raise ResponseIsEmpty(params)
             return response.json()
         else:
             raise Exception(
                 f"Failed to extract games from Squiggle API. Status Code: {response.status_code}. Response: {response.text}"
             )
-    def get_odds(self, year: str, round: str) -> dict:
+    def get_odds(self, year: int, round: int) -> dict:
         """Fetches odds for a specific season (year) and round for games not yet complete.
 
         Args:
