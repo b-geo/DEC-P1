@@ -18,6 +18,8 @@ won't be any incremental extract from db
 - doing it properly takes a lot longer!
 - upsert games and odds since game_id for both. overwrite player rankings (need only active players)
 - have made extract full only for postgres extract
+- need to learn coding patterns
+- changed logging a bit to use loguru and make one file
 
 
 assets
@@ -65,3 +67,4 @@ LOAD
 - aws and 
 - documentation
 
+i've used a mix of upsert and overwrite but realistically should probably be different
