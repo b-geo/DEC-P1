@@ -5,7 +5,7 @@ import os
 from sqlalchemy import Table, Column, Integer, String, MetaData
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def setup_postgresql_client():
     load_dotenv()
     #silver db
@@ -18,7 +18,7 @@ def setup_postgresql_client():
     return silver_postgresql_client
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def setup_table():
     table_name = "test_table"
     metadata = MetaData()
