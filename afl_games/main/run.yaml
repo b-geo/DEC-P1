@@ -1,6 +1,0 @@
-pipelines:
-  - name: afl_games
-    config: 
-      exchange_codes_path: "./main/data/raw/2024-r24-player_rankings.csv"
-      log_folder_path: "./main/logs"
-
