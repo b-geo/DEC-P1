@@ -17,7 +17,7 @@ import sys
 def run_pipeline(pipeline_config):
     logger.remove(0)
     # logger.add(sys.stderr, format="{time} | {level} | {message}")
-    logger.add(f"{pipeline_config.get("log_folder_path")}\\file_name.log", retention="1 minute", format="{time} | {level} | {message}")
+    logger.add(f"{pipeline_config.get("log_folder_path")}\\{datetime.date.today()}-afl_games.log", retention="1 minute", format="{time} | {level} | {message}")
     load_dotenv()
     #source db
     SOURCE_DATABASE_NAME = os.environ.get("SOURCE_DATABASE_NAME")
