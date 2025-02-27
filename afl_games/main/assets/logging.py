@@ -17,9 +17,12 @@ class PipelineLogging:
         self.logger = logger
         self.logger_start = datetime.now()
     def get_logs(self) -> str:
-        with open(self.file_path, "r") as file:
-            latest_logs = "".join([line for line in file.readlines() if self.logger_start < datetime.fromisoformat(line.split(" | ")[0]).replace(tzinfo=None)])
-            return latest_logs
+        try:
+            with open(self.file_path, "r") as file:
+                latest_logs = "".join([line for line in file.readlines()])
+                return latest_logs
+        except BaseException as e:
+            raise Exception("Failed to get log file.")
 
 class MetaDataLoggingStatus:
     """Data class for log status"""
