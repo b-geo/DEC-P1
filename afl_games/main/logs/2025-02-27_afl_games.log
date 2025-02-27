@@ -325,3 +325,33 @@
 2025-02-27T15:04:30.615033+0800 | INFO | Getting SQL files from sql/extract.
 2025-02-27T15:04:30.615033+0800 | INFO | Extracting summary query data from postgres.
 2025-02-27T15:04:30.618031+0800 | INFO | Loading summary data to postgres.
+2025-02-27T15:23:04.830660+0800 | INFO | Creating client for postgres database (silver layer).
+2025-02-27T15:23:04.830660+0800 | INFO | Creating client for postgres database (gold layer).
+2025-02-27T15:23:04.833713+0800 | INFO | Creating Squiggle API client.
+2025-02-27T15:23:04.833713+0800 | INFO | Extracting games data for season 2025.
+2025-02-27T15:23:06.561952+0800 | INFO | Transforming games data.
+2025-02-27T15:23:06.563951+0800 | INFO | Extracting odds data for season 2025, round 0.
+2025-02-27T15:23:06.834876+0800 | INFO | Transforming odds data.
+2025-02-27T15:23:06.835876+0800 | INFO | Extracting player fantasy scoring data.
+2025-02-27T15:23:06.836878+0800 | INFO | Transforming player fantasy data to group by team.
+2025-02-27T15:23:06.838876+0800 | INFO | Loading games data to postgres.
+2025-02-27T15:23:07.050086+0800 | INFO | Loading odds data to postgres.
+2025-02-27T15:23:07.062594+0800 | INFO | Loading team fantasy data to postgres.
+2025-02-27T15:23:07.064594+0800 | INFO | Getting SQL files from sql/extract.
+2025-02-27T15:23:07.064594+0800 | INFO | Extracting summary query data from postgres.
+2025-02-27T15:23:07.068594+0800 | INFO | Loading summary data to postgres.
+2025-02-27T15:25:03.252788+0800 | INFO | Creating client for postgres database (silver layer).
+2025-02-27T15:25:03.252788+0800 | INFO | Creating client for postgres database (gold layer).
+2025-02-27T15:25:03.255911+0800 | INFO | Creating Squiggle API client.
+2025-02-27T15:25:03.255911+0800 | INFO | Extracting games data for season 2025.
+2025-02-27T15:25:04.435097+0800 | INFO | Transforming games data.
+2025-02-27T15:25:04.437099+0800 | INFO | Extracting odds data for season 2025, round 0.
+2025-02-27T15:25:04.703278+0800 | INFO | Transforming odds data.
+2025-02-27T15:25:04.703278+0800 | INFO | Extracting player fantasy scoring data.
+2025-02-27T15:25:04.705283+0800 | INFO | Transforming player fantasy data to group by team.
+2025-02-27T15:25:04.707283+0800 | INFO | Loading games data to postgres.
+2025-02-27T15:25:04.927729+0800 | INFO | Loading odds data to postgres.
+2025-02-27T15:25:04.938760+0800 | INFO | Loading team fantasy data to postgres.
+2025-02-27T15:25:04.941760+0800 | INFO | Getting SQL files from sql/extract.
+2025-02-27T15:25:04.941760+0800 | INFO | Extracting summary query data from postgres.
+2025-02-27T15:25:04.944761+0800 | INFO | Loading summary data to postgres.
