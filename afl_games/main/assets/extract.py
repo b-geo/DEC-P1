@@ -2,7 +2,6 @@ import pandas as pd
 from pathlib import Path
 from main.connectors.squiggle_api import SquiggleApiClient
 from main.connectors.postgresql import PostgreSqlClient
-from sqlalchemy.engine import Engine
 from jinja2 import Template
 
 def extract_games(squiggle_api_client: SquiggleApiClient, year: int) -> pd.DataFrame:
@@ -16,8 +15,13 @@ def extract_odds(squiggle_api_client: SquiggleApiClient, year: int, round: str) 
     return df_odds
 
 def extract_player_rankings(player_rankings_path: Path) -> pd.DataFrame:
-    df_player_rankings = pd.read_csv(player_rankings_path)
-    return df_player_rankings
+    if Path(player_rankings_path).exists(): #pd would have better exception handling than me but oh well.
+        df_player_rankings = pd.read_csv(player_rankings_path)
+        return df_player_rankings
+    else:
+        raise Exception(
+            f"Missing {player_rankings_path} file for player rankings data!"
+        )
 
 # this function would normally be if changing the method of extract but have kept for consistency with the above
 # even though we could just use the postgres class instance to execute this.

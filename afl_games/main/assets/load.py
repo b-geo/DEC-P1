@@ -3,9 +3,10 @@ from main.connectors.postgresql import PostgreSqlClient
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float
 
 class PostgresSqlLoader:
-    def __init__(self,
-                 postgresql_client: PostgreSqlClient
-                 ):
+    def __init__(
+            self,
+            postgresql_client: PostgreSqlClient
+            ):
         self.client = postgresql_client
         self.metadata = MetaData()
     def _load(
