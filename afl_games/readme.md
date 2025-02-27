@@ -42,8 +42,26 @@ pipeline
 
 **questions for doug**
 - is logging to file and db normal?
-- when to pass round number, year - get current round?
-- if loading multiple csv should they be a connector?
-- is there another folder format that is as good?
-- when to pass in year and round ?
-- incremental extract do i need to hold most recent value?
+- jonathon had mentioned log guru instead of logging
+    - do we use that and is metadata logging required?
+- do we need to use dag? not gonna do a dag unless i have to
+
+**holds games for season**
+EXTRACT
+- games is all of season (slight incremental)
+- tips are for games of current round and games not yet complete (incremental)
+- player rankings is full cause players could leave
+
+LOAD
+- upsert all 2025 games
+- tips are for current round so full overwrite
+- player rankings are as of last season so full overwrite
+- summary table is full overwrite
+
+**broad order**
+- code
+- docstrings etc
+- logging
+- aws and 
+- documentation
+

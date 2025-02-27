@@ -1,0 +1,7 @@
+pipelines:
+  - name: afl_games
+    config: 
+      log_folder_path: "./main/logs"
+      player_rankings_path: "./main/data/raw/2024-r24-player_rankings.csv"
+      sql_extract_path: "./main/assets/sql/extract"
+
