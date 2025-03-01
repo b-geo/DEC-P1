@@ -4,7 +4,7 @@ import pandas as pd
 from main.connectors.squiggle_api import SquiggleApiClient
 from main.connectors.postgresql import PostgreSqlClient
 from main.assets.load import PostgresSqlLoader
-from main.assets.helpers import current_round
+from main.assets.helpers import current_round, compare_table_schema
 from main.assets.extract import extract_games, extract_odds, extract_player_rankings, extract_postgres
 from main.assets.transform import transform_games, transform_odds, transform_player_rankings
 from main.assets.logging import PipelineLogging, MetaDataLogging, MetaDataLoggingStatus
@@ -13,42 +13,63 @@ from jinja2 import Environment, FileSystemLoader
 from loguru import logger
 
 
-def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: PostgreSqlClient):
-    #set up logging
-    pipeline_logging = PipelineLogging(
-        pipeline_name = pipeline_name,
-        log_folder_path = pipeline_config.get("log_folder_path")
-        )
-    logger = pipeline_logging.logger
-    metadata_logging = MetaDataLogging(
-       pipeline_name = pipeline_name,
-       postgresql_client = postgres_logging_client,
-       config = pipeline_config
-    )
-    #load env variables
-    load_dotenv()
-    
-    #silver db
-    SILVER_DATABASE_NAME = os.environ.get("SILVER_DATABASE_NAME")
-    SILVER_SERVER_NAME = os.environ.get("SILVER_SERVER_NAME")
-    SILVER_DB_USERNAME = os.environ.get("SILVER_DB_USERNAME")
-    SILVER_DB_PASSWORD = os.environ.get("SILVER_DB_PASSWORD")
-    SILVER_PORT = os.environ.get("SILVER_PORT")
-    logger.info(f"Creating client for {SILVER_DATABASE_NAME} database (silver layer).")
-    silver_postgres_client = PostgreSqlClient(SILVER_SERVER_NAME, SILVER_DATABASE_NAME, SILVER_DB_USERNAME, SILVER_DB_PASSWORD, SILVER_PORT)
-    #gold db
-    GOLD_DATABASE_NAME = os.environ.get("GOLD_DATABASE_NAME")
-    GOLD_SERVER_NAME = os.environ.get("GOLD_SERVER_NAME")
-    GOLD_DB_USERNAME = os.environ.get("GOLD_DB_USERNAME")
-    GOLD_DB_PASSWORD = os.environ.get("GOLD_DB_PASSWORD")
-    GOLD_PORT = os.environ.get("GOLD_PORT")
-    logger.info(f"Creating client for {GOLD_DATABASE_NAME} database (gold layer).")
-    gold_postgres_client = PostgreSqlClient(GOLD_SERVER_NAME, GOLD_DATABASE_NAME, GOLD_DB_USERNAME, GOLD_DB_PASSWORD, GOLD_PORT)
-    
-    #squiggle user agent
-    SQUIGGLE_USER_AGENT = os.environ.get("SQUIGGLE_USER_AGENT")
-    
+def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: PostgreSqlClient):   
     try:
+        #set up logging
+        pipeline_logging = PipelineLogging(
+            pipeline_name = pipeline_name,
+            log_folder_path = pipeline_config.get("log_folder_path")
+            )
+        logger = pipeline_logging.logger
+        metadata_logging = MetaDataLogging(
+        pipeline_name = pipeline_name,
+        postgresql_client = postgres_logging_client,
+        config = pipeline_config
+        )
+        #load env variables
+        load_dotenv()
+        
+        #silver db
+        SILVER_DATABASE_NAME = os.environ.get("SILVER_DATABASE_NAME")
+        if len(SILVER_DATABASE_NAME) < 1:
+            pipeline_logging.logger.warning(f"SILVER_DATABASE_NAME is empty.")
+        SILVER_SERVER_NAME = os.environ.get("SILVER_SERVER_NAME")
+        if len(SILVER_SERVER_NAME) < 1:
+            pipeline_logging.logger.warning(f"SILVER_SERVER_NAME is empty.")
+        SILVER_DB_USERNAME = os.environ.get("SILVER_DB_USERNAME")
+        if len(SILVER_DB_USERNAME) < 1:
+            pipeline_logging.logger.warning(f"SILVER_DB_USERNAME is empty.")
+        SILVER_DB_PASSWORD = os.environ.get("SILVER_DB_PASSWORD")
+        if len(SILVER_DB_PASSWORD) < 1:
+            pipeline_logging.logger.warning(f"SILVER_DB_PASSWORD is empty.")
+        SILVER_PORT = os.environ.get("SILVER_PORT")
+        if len(SILVER_PORT) < 1:
+            pipeline_logging.logger.warning(f"SILVER_PORT is empty.")
+        logger.info(f"Creating client for {SILVER_DATABASE_NAME} database (silver layer).")
+        silver_postgres_client = PostgreSqlClient(SILVER_SERVER_NAME, SILVER_DATABASE_NAME, SILVER_DB_USERNAME, SILVER_DB_PASSWORD, SILVER_PORT)
+        
+        #gold db
+        GOLD_DATABASE_NAME = os.environ.get("GOLD_DATABASE_NAME")
+        if len(GOLD_DATABASE_NAME) < 1:
+            pipeline_logging.logger.warning(f"GOLD_DATABASE_NAME is empty.")
+        GOLD_SERVER_NAME = os.environ.get("GOLD_SERVER_NAME")
+        if len(GOLD_SERVER_NAME) < 1:
+            pipeline_logging.logger.warning(f"GOLD_SERVER_NAME is empty.")
+        GOLD_DB_USERNAME = os.environ.get("GOLD_DB_USERNAME")
+        if len(GOLD_DB_USERNAME) < 1:
+            pipeline_logging.logger.warning(f"GOLD_DB_USERNAME is empty.")
+        GOLD_DB_PASSWORD = os.environ.get("GOLD_DB_PASSWORD")
+        if len(GOLD_DB_PASSWORD) < 1:
+            pipeline_logging.logger.warning(f"GOLD_DB_PASSWORD is empty.")
+        GOLD_PORT = os.environ.get("GOLD_PORT")
+        if len(GOLD_PORT) < 1:
+            pipeline_logging.logger.warning(f"GOLD_PORT is empty.")
+        logger.info(f"Creating client for {GOLD_DATABASE_NAME} database (gold layer).")
+        gold_postgres_client = PostgreSqlClient(GOLD_SERVER_NAME, GOLD_DATABASE_NAME, GOLD_DB_USERNAME, GOLD_DB_PASSWORD, GOLD_PORT)
+        
+        #squiggle user agent
+        SQUIGGLE_USER_AGENT = os.environ.get("SQUIGGLE_USER_AGENT")
+        
         #log start to db
         metadata_logging.log()
         
@@ -110,8 +131,8 @@ def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: Post
         metadata_logging.log(
         status=MetaDataLoggingStatus.RUN_SUCCESS, logs=pipeline_logging.get_logs()
         )
-    except BaseException as e:
-        pipeline_logging.logger.error(f"Pipeline failed with exception {e}")
+    except Exception as e:
+        pipeline_logging.logger.opt(exception=e).error(f"Pipeline failed with exception {e}")
         metadata_logging.log(
             status=MetaDataLoggingStatus.RUN_FAILURE, logs=pipeline_logging.get_logs()
         )

@@ -19,8 +19,7 @@ class PipelineLogging:
     def get_logs(self) -> str:
         try:
             with open(self.file_path, "r") as file:
-                latest_logs = "".join([line for line in file.readlines()])
-                return latest_logs
+                return "".join([line for line in file.readlines()])
         except BaseException as e:
             raise Exception("Failed to get log file.")
 
