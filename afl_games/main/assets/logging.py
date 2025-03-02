@@ -11,7 +11,7 @@ class PipelineLogging:
         pipeline_name: str,
         log_folder_path: str,
         ):
-        self.file_path = f"{log_folder_path}\\{datetime.now().strftime("%Y-%m-%d")}_{pipeline_name}.log"
+        self.file_path = f"{log_folder_path}\\{datetime.now().strftime('%Y-%m-%d')}_{pipeline_name}.log"
         logger.remove(0)
         logger.add(self.file_path, format="{time} | {level} | {message}")
         self.logger = logger

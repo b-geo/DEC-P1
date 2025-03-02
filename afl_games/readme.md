@@ -20,6 +20,7 @@ won't be any incremental extract from db
 - have made extract full only for postgres extract
 - need to learn coding patterns
 - changed logging a bit to use loguru and make one file
+- used a mix of environments and pip install with out keeping track and doin req.txt
 
 
 assets
