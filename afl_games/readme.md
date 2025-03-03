@@ -69,3 +69,5 @@ LOAD
 - documentation
 
 i've used a mix of upsert and overwrite but realistically should probably be different
+
+- last updated should be actual date for summary?
