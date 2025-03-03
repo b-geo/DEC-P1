@@ -70,4 +70,23 @@ LOAD
 
 i've used a mix of upsert and overwrite but realistically should probably be different
 
-- last updated should be actual date for summary?
+
+- database ERD
+- i used branches that aligned with modules in plane.so project planning
+- diagram of flow
+- headings: datasets and extact methods, order of extraction,load and load methods, transformations methods and functions, testings and tests i did, logging what i did and how, docker what i did, aws structure
+- project context and goals
+- demo run
+- lesson's learnt
+- docstrings and comments
+- readme including all above and also how to install
+->
+Version History
+0.1 (Initial Release)
+
+AWS
+- EC2 is virtual server that holds it all. You just choose to start an instance.
+- ECR Container Registry. ECR container is referenced in ECS task that is created. It is a respository you add to ECR.
+- ECS for running containers. Cluster is created here - task runs from here. ECS can use Fargate or EC2.
+- S3 stores .env
+

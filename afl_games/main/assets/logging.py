@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from loguru import logger
 from datetime import datetime
@@ -14,6 +15,7 @@ class PipelineLogging:
         self.file_path = f"{log_folder_path}\\{datetime.now().strftime('%Y-%m-%d')}_{pipeline_name}.log"
         logger.remove(0)
         logger.add(self.file_path, format="{time} | {level} | {message}")
+        logger.add(sys.stderr, format="{time} | {level} | {message}")
         self.logger = logger
         self.logger_start = datetime.now()
     def get_logs(self) -> str:
