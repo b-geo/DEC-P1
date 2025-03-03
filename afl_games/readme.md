@@ -20,6 +20,7 @@ won't be any incremental extract from db
 - have made extract full only for postgres extract
 - need to learn coding patterns
 - changed logging a bit to use loguru and make one file
+- used a mix of environments and pip install with out keeping track and doin req.txt
 
 
 assets
@@ -68,3 +69,5 @@ LOAD
 - documentation
 
 i've used a mix of upsert and overwrite but realistically should probably be different
+
+- last updated should be actual date for summary?

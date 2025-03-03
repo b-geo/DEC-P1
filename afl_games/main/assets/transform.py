@@ -1,12 +1,12 @@
 import pandas as pd
 
 def transform_games(df: pd.DataFrame) -> pd.DataFrame:
-    df["localtime"] = df["localtime"] + df["tz"]
+    df.loc[:,"localtime"] = df["localtime"] + df["tz"]
     df_sorted = df.sort_values(by=["unixtime"], ascending=True)
-    df_selected = df_sorted[["id", "updated", "localtime", "hteam", "ateam", "round", "complete"]]
-    df_selected.loc[:,"id"]= pd.to_numeric(df_selected["id"])
-    df_selected.loc[:,"round"]= pd.to_numeric(df_selected["round"])
-    df_selected.loc[:,"complete"]= pd.to_numeric(df_selected["complete"])
+    df_selected = df_sorted.loc[:, ["id", "updated", "localtime", "hteam", "ateam", "round", "complete"]]
+    df_selected.loc[:,"id"]= pd.to_numeric(df_selected.loc[:,"id"])
+    df_selected.loc[:,"round"]= pd.to_numeric(df_selected.loc[:,"round"])
+    df_selected.loc[:,"complete"]= pd.to_numeric(df_selected.loc[:,"complete"])
     # All but "round" renamed
     df_renamed = df_selected.rename(
         columns={
@@ -21,9 +21,9 @@ def transform_games(df: pd.DataFrame) -> pd.DataFrame:
     return df_renamed
 
 def transform_odds(df: pd.DataFrame) -> pd.DataFrame:
-    df_selected = df[["gameid", "updated", "tip", "margin", "confidence"]]
-    df_selected.loc[:,"margin"]= pd.to_numeric(df_selected["margin"])
-    df_selected.loc[:,"gameid"]= pd.to_numeric(df_selected["gameid"])
+    df_selected = df.loc[:, ["gameid", "updated", "tip", "margin", "confidence"]]
+    df_selected.loc[:,"margin"]= pd.to_numeric(df_selected.loc[:,"margin"])
+    df_selected.loc[:,"gameid"]= pd.to_numeric(df_selected.loc[:,"gameid"])
     # "tip" and "confidence" not renamed
     df_renamed = df_selected.rename(
         columns={
@@ -54,10 +54,10 @@ def transform_player_rankings(df: pd.DataFrame) -> pd.DataFrame:
         "Swans": "Sydney",
         "Eagles": "West Coast",
         "Bulldogs": "Western Bulldogs"}
-    df["Team"] = df["Team"].map(teams_names_mapping).fillna(df["Team"])
+    df.loc[:,["Team"]] = df["Team"].map(teams_names_mapping).fillna(df["Team"])
     df_grouped = df.groupby(by=["Team"])["Score"].sum().reset_index()
-    df_selected = df_grouped[["Team","Score"]]
-    df_selected.loc[:,"Score"]= pd.to_numeric(df_selected["Score"])
+    df_selected = df_grouped.loc[:,["Team","Score"]]
+    df_selected.loc[:,"Score"]= pd.to_numeric(df_selected.loc[:,"Score"])
     df_sorted = df_selected.sort_values(by=["Score"], ascending=False)
     df_renamed = df_sorted.rename(
         columns={

@@ -4,28 +4,27 @@ import pandas as pd
 from main.connectors.squiggle_api import SquiggleApiClient
 from main.connectors.postgresql import PostgreSqlClient
 from main.assets.load import PostgresSqlLoader
-from main.assets.helpers import current_round, compare_table_schema
+from main.assets.helpers import current_round
 from main.assets.extract import extract_games, extract_odds, extract_player_rankings, extract_postgres
 from main.assets.transform import transform_games, transform_odds, transform_player_rankings
 from main.assets.logging import PipelineLogging, MetaDataLogging, MetaDataLoggingStatus
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
-from loguru import logger
 
 
 def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: PostgreSqlClient):   
-    try:
-        #set up logging
-        pipeline_logging = PipelineLogging(
-            pipeline_name = pipeline_name,
-            log_folder_path = pipeline_config.get("log_folder_path")
-            )
-        logger = pipeline_logging.logger
-        metadata_logging = MetaDataLogging(
+    #set up logging
+    pipeline_logging = PipelineLogging(
         pipeline_name = pipeline_name,
-        postgresql_client = postgres_logging_client,
-        config = pipeline_config
+        log_folder_path = pipeline_config.get("log_folder_path")
         )
+    logger = pipeline_logging.logger
+    metadata_logging = MetaDataLogging(
+    pipeline_name = pipeline_name,
+    postgresql_client = postgres_logging_client,
+    config = pipeline_config
+    )
+    try:
         #load env variables
         load_dotenv()
         
@@ -131,7 +130,10 @@ def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: Post
         metadata_logging.log(
         status=MetaDataLoggingStatus.RUN_SUCCESS, logs=pipeline_logging.get_logs()
         )
+
+        print(f"Pipeline succeeded.")
     except Exception as e:
+        print(f"Pipeline failed with exception {e}.")
         pipeline_logging.logger.opt(exception=e).error(f"Pipeline failed with exception {e}")
         metadata_logging.log(
             status=MetaDataLoggingStatus.RUN_FAILURE, logs=pipeline_logging.get_logs()
