@@ -24,6 +24,7 @@ def transform_odds(df: pd.DataFrame) -> pd.DataFrame:
     df_selected = df.loc[:, ["gameid", "updated", "tip", "margin", "confidence"]]
     df_selected.loc[:,"margin"]= pd.to_numeric(df_selected.loc[:,"margin"])
     df_selected.loc[:,"gameid"]= pd.to_numeric(df_selected.loc[:,"gameid"])
+    df_selected.loc[:,"confidence"]= pd.to_numeric(df_selected.loc[:,"confidence"])
     # "tip" and "confidence" not renamed
     df_renamed = df_selected.rename(
         columns={

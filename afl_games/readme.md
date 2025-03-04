@@ -44,10 +44,7 @@ pipeline
 
 
 **questions for doug**
-- is logging to file and db normal?
-- jonathon had mentioned log guru instead of logging
-    - do we use that and is metadata logging required?
-- do we need to use dag? not gonna do a dag unless i have to
+- is it normal to have slides or just show?
 
 **holds games for season**
 EXTRACT
