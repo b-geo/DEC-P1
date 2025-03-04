@@ -6,4 +6,6 @@ select
 inner join odds o on g.game_id = o.game_id
 inner join team_fantasy tf1 on g.home_team = tf1.team
 inner join team_fantasy tf2 on g.away_team = tf2.team
+where  g.game_time::timestamptz > now() AT TIME ZONE
+	SUBSTRING(g.game_time FROM '[+-]\d{2}:\d{2}')
 order by g.game_id
