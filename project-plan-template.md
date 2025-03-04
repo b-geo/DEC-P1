@@ -4,18 +4,12 @@ An ETL pipeline for Australian Rules Football (AFL) games data. The result is an
 
 ## Objective
 
-Provide a user with a summarised view of game details to assist in making their AFL game tips for the round. The user is assumed to be in a tipping competition where you gain points for guessing the winner of each game.
-
-## Source datasets
-
-- [Squiggle](https://api.squiggle.com.au/) is a RESTful API that allows for various query options. The queries used for this project are "games" and "tips" (tips will referred to as odds going forward). Squiggle allows you to specify what season, what round and what team you are querying for. Squiggle doesn't require an API key but does require you specify your email address in the User-Agent header.
-
-- [Footywire](https://www.footywire.com/) is an AFL statistics website that does not offer a RESTful API. For this reason, individual player fantasy data has been provided in a CSV.
+Provide a user with a summarised view of game details to assist in making their AFL game tips for the round. The user is assumed to be in a tipping competition where you gain points with each correct tip.
 
 ## Usage
 
 ### Pipeline configuration
-`DEC-P1\afl_games\run.yaml` allows you to edit settings per pipeline. Each `name` is a new pipeline and `config` contains pipeline specific settings.
+`afl_games\run.yaml` allows you to edit settings per pipeline. Each `name` is a new pipeline and `config` contains pipeline specific settings.
 
 ```
 name: afl_games
@@ -32,8 +26,14 @@ name: afl_games
 ### Environment variables
 To run, a number of environment variable need to be set. These can be added to the `template.env`, or if you are using a cloud service provider they can be set there.
 
+## Source datasets
+
+- [Squiggle](https://api.squiggle.com.au/) is a RESTful API that allows for various queries related to AFL games. The queries used for this project are "games" and "tips" (tips will referred to as odds going forward). Squiggle allows you to specify what season, what round and what team you are querying for. Squiggle doesn't require an API key but does require you specify your email address in the User-Agent header.
+
+- [Footywire](https://www.footywire.com/) is an AFL statistics website that does not offer a RESTful API. For this reason, individual player fantasy data has been provided in a CSV.
+
 ## Solution architecture
-The default implementation of this project is a Docker image running Python code, being deployed to AWS.
+The default implementation of this project is a Docker image deployed to Amazon Web Services (AWS).
 
 - **Squiggle API** for game data and odds data.
 - **Docker image** containing python code and the *player fantasy data* CSV.
@@ -48,7 +48,12 @@ The default implementation of this project is a Docker image running Python code
 
 ![images/arc.png](images/arc.png)
 
-## Pipeline
+### Entity Relationship Diagram
+
+![images/erd.png](images/erd.png)
+
+
+## Pipeline steps (E-T-L-E-T)
 
 ### Extract
 
@@ -56,7 +61,7 @@ The default implementation of this project is a Docker image running Python code
 - Extract from Squiggle API, specifying this season only (incremental extract).
 
 **Data: odds**
-- Identify most recent incomplete game to get what round we are in for the season.
+- Identify most recent incomplete game to then identify the current round.
 - Extract from Squiggle API, specifying this season and this round (incremental extract).
 
 **Data: team_fantasy**
@@ -66,7 +71,7 @@ The default implementation of this project is a Docker image running Python code
 
 **Data: games**
 - Concatenate time and timezone of the game to a single column.
-- Sort rows by `unixtime` column.
+- Sort rows by `unixtime`.
 - Select a subset of columns.
 - Cast `id`, `round` and `complete` as numeric types.
 - Rename colmuns:
@@ -93,10 +98,10 @@ The default implementation of this project is a Docker image running Python code
     }
     ```
 **Data: team_fantasy**
-- A mapping function is applied to the teams columns to match change the format of team names in this dataset to match Squiggle team names.
-- Individual players are grouped by teams.
+- A mapping function is applied to the `teams` column to team names in this dataset to match Squiggle team names.
+- Individual players are grouped by team.
 - Cast `Score` as a numeric type.
-- Sort rows by `Score` column.
+- Sort rows by `Score`.
 - Rename columns:
     ```
     {
@@ -107,22 +112,34 @@ The default implementation of this project is a Docker image running Python code
 
 ### Load
 
-**Data: games**
-- Load table to PostgreSQL `silver` database.
-- This uses an upsert because we want to keep track of all games, not just current season that we are extracting, and we want games updated with the most recent details.
+**Table: games**
+- Load table to PostgreSQL `silver` database (upsert).
 
-**Data: odds**
-- Load table to PostgreSQL `silver` database.
-- This uses an overwrite because because we want
+**Table: odds**
+- Load table to PostgreSQL `silver` database (upsert).
 
-**Data: team_fantasy**
-- Extract player fantasy ratings from Footywise CSV (full extract).
+**Table: team_fantasy**
+- Load table to PostgreSQL `silver` database  (upsert).
 
+### Extract
+
+**Data: summary**
+- Extract from `silver` database a summary table.
+- `games` and `odds` tables are joined based on `game_id` to `game_id` and `team_fantasy` is joined based on `home_team` to `team` and `away_team` to `team`.
+
+### Load
+
+**Table: summary**
+- Load table to PostgreSQL `gold` database (overwrite).
+- The `summary` table will be a view of games yet to be played of the current round, so it is important for irrelevant data to be removed.
+
+**Table: pipline_logs**
+- Load table to PostgreSQL `logging` database (insert).
 
 
 ## Breakdown of tasks
 
-I broke my project down into key areas that I could complete in blocks. These blocks became 'modules' on Plane.so as well as my Git branches. Within the Plane.so modules were tasks specific to each block. The blocks I indentified were:
+My project was broken down into blocks, based on the key requirements. These blocks became 'modules' on Plane.so as well as my Git branches. Within the Plane.so modules were tasks specific to each block. The blocks I indentified were:
 
 1. A working prototype: this was the basic extract and transform of my data, mostly in one file.
 2. Code Clean Up: introducing separate files, separate functions, separate classes and a YAML config.
