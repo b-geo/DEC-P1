@@ -46,12 +46,11 @@ The default implementation of this project is a Docker image deployed to Amazon 
 - **RDS** to run a PostgreSQL database instance.
     {provide screenshot of ECR}
 
-![images/arc.png](images/arc.png)
+![images/arc_diagram.png](images/arc_diagram.png)
 
 ### Entity Relationship Diagram
 
-![images/erd.png](images/erd.png)
-
+![images/er_diagram.png](images/er_diagram.png)
 
 ## Pipeline steps (E-T-L-E-T)
 
@@ -150,7 +149,6 @@ My project was broken down into blocks, based on the key requirements. These blo
 7. Documentation: document the purpose of the project and how it works (this was not a Git branch).
 
 ![images/planedotso.png](images/planedotso.png)
-![images/git_history.png](images/git_history.png)
 
 ## What I learned
 
