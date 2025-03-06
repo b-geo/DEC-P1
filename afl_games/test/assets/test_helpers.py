@@ -64,13 +64,15 @@ def games_df():
         }
     )
 
+# Test the correct exceptions are raised when two tables aren't the same.
 def test_compare_table_schema(source_table, target_table, target_table2):
     with pytest.raises(Exception, match="Table games in target DB does not contain column complete_perc."):
         compare_table_schema(source_table = source_table, target_table = target_table)
     
     with pytest.raises(Exception, match=f"Source column 'complete_perc' is INTEGER but expected VARCHAR."):
         compare_table_schema(source_table = source_table, target_table = target_table2)
-    
+
+ #Test that based on a static data set, the correct round is computed.   
 def test_current_round(games_df):
     expected_round = 0
     actual_round = current_round(games_df)
