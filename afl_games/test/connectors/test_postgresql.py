@@ -30,11 +30,11 @@ def setup_table():
     )
     return table_name, table, metadata
 
-
+# Test PostgreSQL client insert
 def test_postgresqlclient_insert(setup_postgresql_client, setup_table):
     postgresql_client = setup_postgresql_client
     table_name, table, metadata = setup_table
-    postgresql_client.drop_table(table_name)  # make sure table has already been dropped
+    postgresql_client.drop_table(table_name)
 
     data = [{"id": 1, "value": "hello"}, {"id": 2, "value": "world"}]
 
@@ -45,11 +45,11 @@ def test_postgresqlclient_insert(setup_postgresql_client, setup_table):
 
     postgresql_client.drop_table(table_name)
 
-
+# Test PostgreSQL client upsert
 def test_postgresqlclient_upsert(setup_postgresql_client, setup_table):
     postgresql_client = setup_postgresql_client
     table_name, table, metadata = setup_table
-    postgresql_client.drop_table(table_name)  # make sure table has already been dropped
+    postgresql_client.drop_table(table_name)
 
     data = [{"id": 1, "value": "hello"}, {"id": 2, "value": "world"}]
 
@@ -65,11 +65,11 @@ def test_postgresqlclient_upsert(setup_postgresql_client, setup_table):
 
     postgresql_client.drop_table(table_name)
 
-
+# Test PostgreSQL client overwrite
 def test_postgresqlclient_overwrite(setup_postgresql_client, setup_table):
     postgresql_client = setup_postgresql_client
     table_name, table, metadata = setup_table
-    postgresql_client.drop_table(table_name)  # make sure table has already been dropped
+    postgresql_client.drop_table(table_name) 
 
     data = [{"id": 1, "value": "hello"}, {"id": 2, "value": "world"}]
 

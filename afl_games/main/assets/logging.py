@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from loguru import logger
 from datetime import datetime
@@ -6,6 +7,7 @@ from sqlalchemy import insert, select, func
 from main.connectors.postgresql import PostgreSqlClient
 
 class PipelineLogging:
+    """A logging class for logging to a .log file."""
     def __init__(
         self,
         pipeline_name: str,
@@ -14,6 +16,7 @@ class PipelineLogging:
         self.file_path = f"{log_folder_path}\\{datetime.now().strftime('%Y-%m-%d')}_{pipeline_name}.log"
         logger.remove(0)
         logger.add(self.file_path, format="{time} | {level} | {message}")
+        logger.add(sys.stderr, format="{time} | {level} | {message}")
         self.logger = logger
         self.logger_start = datetime.now()
     def get_logs(self) -> str:
@@ -24,13 +27,14 @@ class PipelineLogging:
             raise Exception("Failed to get log file.")
 
 class MetaDataLoggingStatus:
-    """Data class for log status"""
+    """A data class specifying statuses of the pipeline."""
 
     RUN_START = "start"
     RUN_SUCCESS = "success"
     RUN_FAILURE = "fail"
 
 class MetaDataLogging:
+    """A metadata logging class for logging the overall status of the pipeline and the logs of the pipeline."""
     def __init__(
         self,
         pipeline_name: str,

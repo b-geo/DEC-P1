@@ -3,20 +3,7 @@ from sqlalchemy.engine import URL
 from sqlalchemy.dialects import postgresql
 
 class PostgreSqlClient:
-    """ _summary_ A client to to perform select queries on a PostgreSQL database.
-    
-    Example:
-
-    a = PostgreSqlClient(
-        server_name: "server",
-        database_name: "name",
-        username: "user",
-        password: "pass",
-        port: 5432
-        )
-    b = a.select_all(table=table)
-    """
-
+    """A client to to perform select queries on a PostgreSQL database."""
     def __init__(
         self,
         server_name: str,
@@ -43,9 +30,7 @@ class PostgreSqlClient:
         self.engine = create_engine(connection_url)
 
     def select_all(self, table: Table) -> list[dict]:
-        """
-        Gets all tables and returns the result in a list of dictionaries.
-        """
+        """Get all tables in databased and return the result in a list of dictionaries."""
         return [dict(row) for row in self.engine.execute(table.select()).all()]
 
     def run_sql(self, sql: str) -> list[dict]:
@@ -56,30 +41,22 @@ class PostgreSqlClient:
         return [dict(row) for row in self.engine.execute(sql).all()]
 
     def get_metadata(self) -> MetaData:
-        """
-        Gets the metadata object for all tables for a given database
-        """
+        """Get the metadata object for all tables for a given database"""
         metadata = MetaData(bind=self.engine)
         metadata.reflect()
         return metadata
 
     def get_table_schema(self, table_name: str) -> Table:
-        """
-        Gets the table schema and metadata
-        """
+        """Get the table schema and metadata"""
         metadata = self.get_metadata()
         return metadata.tables[table_name]
 
     def table_exists(self, table_name: str) -> bool:
-        """
-        Checks if the table already exists in the database.
-        """
+        """Check if the table already exists in the database."""
         return inspect(self.engine).has_table(table_name)
 
     def create_table(self, table_name: str, metadata: MetaData) -> None:
-        """
-        Creates a single table provided in the metadata object
-        """
+        """Create a single table provided in the metadata object"""
         existing_table = metadata.tables[table_name]
         new_metadata = MetaData()
         columns = [
@@ -90,36 +67,26 @@ class PostgreSqlClient:
         new_metadata.create_all(bind=self.engine)
 
     def create_all_tables(self, metadata: MetaData) -> None:
-        """
-        Creates tables provided in the metadata object
-        """
+        """Create tables provided in the metadata object"""
         metadata.create_all(self.engine)
 
     def drop_table(self, table_name: str) -> None:
-        """
-        Drops a specified table if it exists
-        """
+        """Drop a specified table if it exists"""
         self.engine.execute(f"drop table if exists {table_name};")
 
     def insert(self, data: list[dict], table: Table, metadata: MetaData) -> None:
-        """
-        Insert data into a database table. This method creates the table also if it doesn't exist.
-        """
+        """Insert data into a database table. If the table doesn't exist, it is created."""
         self.create_table(table_name=table.name, metadata=metadata)
         insert_statement = postgresql.insert(table).values(data)
         self.engine.execute(insert_statement)
 
     def overwrite(self, data: list[dict], table: Table, metadata: MetaData) -> None:
-        """
-        Overwrites data into a database table. This method creates the table also if it doesn't exist.
-        """
+        """Overwrite data into a database table. If the table doesn't exist, it is created."""
         self.drop_table(table.name)
         self.insert(data=data, table=table, metadata=metadata)
 
     def upsert(self, data: list[dict], table: Table, metadata: MetaData) -> None:
-        """
-        Upserts data into a database table. This method creates the table also if it doesn't exist.
-        """
+        """Upsert data into a database table. If the table doesn't exist, it is created."""
         self.create_table(table_name=table.name, metadata=metadata)
         key_columns = [
             pk_column.name for pk_column in table.primary_key.columns.values()
