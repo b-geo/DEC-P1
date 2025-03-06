@@ -163,8 +163,6 @@ My project was broken down into blocks, based on the key requirements. These blo
 - **A type hint isn't the same as forcing types**. Although it wasn't causing any errors, I realised some of my docstrings and type annotations were indicating what I expected the data types to be, but this wasn't actually the case. Next time I will test my functions for input and output types earlier to ensure what I am documenting is correct.
 <<<<<<< HEAD
 - **Be more descriptive with git commits**. My git commit messages got to the point of being lazy. This makes it harder to understand what has happened with the code base.
-=======
->>>>>>> e1a2e333abc6a2c6716c586767ca06caee06ba18
 
 ## How I would improve this project with more time
 
