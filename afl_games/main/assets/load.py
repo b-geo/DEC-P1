@@ -3,6 +3,7 @@ from main.connectors.postgresql import PostgreSqlClient
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float
 
 class PostgresSqlLoader:
+    """A PostgresSQL client to interact with the database."""
     def __init__(
             self,
             postgresql_client: PostgreSqlClient

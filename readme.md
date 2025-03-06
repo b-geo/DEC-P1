@@ -161,7 +161,10 @@ My project was broken down into blocks, based on the key requirements. These blo
 - **Its is important to have a `.gitignore` from the beginning**. I didn't realise until half way through that my `.env` was being pushed to Github, as well as the `__pychache__` folders. These had to be removed from my Git respository before adding them to a `.gitignore` otherwise they wouldn't actually be ignored. Next time I will at least start with the templated `.gitignore` via Github.
 - **There are many ways to structure a project and it's important to plan**. I found myself changing the structural pattern of my project across files, folders, functions and classes and this was a result of starting to code before planning. By planning from the start I could've came up with a structural pattern that made sense - this would have saved me time.
 - **A type hint isn't the same as forcing types**. Although it wasn't causing any errors, I realised some of my docstrings and type annotations were indicating what I expected the data types to be, but this wasn't actually the case. Next time I will test my functions for input and output types earlier to ensure what I am documenting is correct.
+<<<<<<< HEAD
 - **Be more descriptive with git commits**. My git commit messages got to the point of being lazy. This makes it harder to understand what has happened with the code base.
+=======
+>>>>>>> e1a2e333abc6a2c6716c586767ca06caee06ba18
 
 ## How I would improve this project with more time
 

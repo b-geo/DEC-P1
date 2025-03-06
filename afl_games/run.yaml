@@ -5,7 +5,7 @@ pipelines:
       player_rankings_path: "./main/data/raw/2024-r24-player_rankings.csv"
       sql_extract_path: "./main/assets/sql/extract"
       games_load_method: "upsert"
-      odds_load_method: "overwrite"
+      odds_load_method: "upsert"
       tf_load_method: "upsert"
       summary_load_method: "overwrite"
 
