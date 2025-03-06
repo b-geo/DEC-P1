@@ -7,6 +7,7 @@ from main.connectors.postgresql import PostgreSqlClient
 
 if __name__ == "__main__":
     load_dotenv()
+    #Create PosrgreSQL client for Logging DB
     LOGGING_DATABASE_NAME = os.environ.get("LOGGING_DATABASE_NAME")
     LOGGING_SERVER_NAME = os.environ.get("LOGGING_SERVER_NAME")
     LOGGING_DB_USERNAME = os.environ.get("LOGGING_DB_USERNAME")
@@ -21,7 +22,7 @@ if __name__ == "__main__":
         port=LOGGING_PORT
     )
 
-    #get config for each pipeline
+    #Get config for each pipeline
     yaml_file_path = __file__.replace(".py", ".yaml")
     if Path(yaml_file_path).exists():
         with open(yaml_file_path) as yaml_file:
@@ -31,7 +32,7 @@ if __name__ == "__main__":
         raise Exception(
             f"Missing {yaml_file_path} file! Please create the yaml file with at least a `name` key for the pipeline name."
         )
-    #run each pipeline
+    #Run each pipeline
     for pipeline in pipeline_list:
         pipeline_name = pipeline.get("name")
         pipeline_config = pipeline.get("config")

@@ -1,9 +1,33 @@
-import time
-from datetime import datetime, timezone
-print(int(time.time()))
+import pandas as pd
+from main.assets.helpers import current_round
+from datetime import datetime
 
-print(datetime.now())
+a = pd.json_normalize(
+        [{
+        "game_id": 37090,
+        "game_data_updated": "2024-11-14 17:08:26",
+        "game_time": "2024-03-06 18:50:00",
+        "home team": "Brisbane Lions",
+        "away team": "Geelong",
+        "complete_perc": 0,
+        "round": 0,
+        "tz":"+11:00"
+        },
+        {
+        "game_id": 37091,
+        "game_data_updated": "2024-11-14 17:08:26",
+        "game_time": "2024-04-06 18:50:00",
+        "home team": "Brisbane Lions",
+        "away team": "Geelong",
+        "complete_perc": 0,
+        "round": 1,
+        "tz":"+11:00"
+        }])
 
-s= "2025-02-27T10:53:32.761107+0800 | INFO | Transforming player fantasy data to group by team."
-res = len(s.encode('utf-8'))
-print(str(res))
+print(current_round(a))
+
+game_time = "2024-11-14 17:08:26+11:00"
+game_time = datetime.strptime(game_time, "%Y-%m-%d %H:%M:%S%z")
+date_object = datetime.strptime(datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"+11:00", "%Y-%m-%d %H:%M:%S%z")
+
+print(game_time < date_object)

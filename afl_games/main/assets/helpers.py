@@ -1,10 +1,18 @@
 import pandas as pd
 from sqlalchemy import Table
+from datetime import datetime
 
-#use as test table
-# from load: compare_table_schema(table, postgresql_client.get_table_schema(table_name=table.name))
 def compare_table_schema(source_table: Table, target_table: Table) -> None:
-    """checks if table in db is same as table that is to be loaded"""
+    """Checks two database tables and raises exception if they don't match.
+
+    Args:
+        source_table (Table): A SQLAlchemy Table class
+        target_table (Table): A SQLAlchemy Table class
+
+    Raises:
+        Exception: Table <target table name> in target DB does not contain column <column in source table>.
+        Exception: Source column '<source column name>' is <source column type> but expected <target column type>.
+    """
     for source_column in source_table.c:
         if source_column.name not in target_table.c:
             raise Exception(f"Table {target_table.name} in target DB does not contain column {source_column.name}.")
@@ -12,10 +20,27 @@ def compare_table_schema(source_table: Table, target_table: Table) -> None:
         if not isinstance(target_column.type, source_column.type.__class__):
             print(f"Source column '{source_column.name}' is {source_column.type} but expected {target_column.type}.")
             raise Exception(f"Source column '{source_column.name}' is {source_column.type} but expected {target_column.type}.")
-    #should i return false if not the same then check for that?
 
 def current_round(df: pd.DataFrame) -> int:
-    """takes in df of games sorted by unix time and gets first one not complete"""
-    df_filtered = df.loc[df["complete_perc"] == 0]
-    current_round = df_filtered["round"].iloc[0]
-    return current_round
+    """Identifies current AFL round from games data.
+
+    Args:
+        df (pd.DataFrame): Games as rows, specifying game date, completion and round.
+
+    Returns:
+        int: The AFL round.
+    """
+    df = df.sort_values(by=["unixtime"], ascending=True)
+    df["localtime"] = df.apply(lambda x: datetime.strptime(x["localtime"], "%Y-%m-%d %H:%M:%S%z"), axis=1)
+    df["now_in_tz"] = df.apply(lambda x: datetime.strptime(datetime.now().strftime("%Y-%m-%d %H:%M:%S"+x["tz"]), "%Y-%m-%d %H:%M:%S%z"), axis=1)
+    df_filtered = df.loc[
+        (df["complete"] == 0) &
+        (df["localtime"] > df["now_in_tz"])
+        ]
+    try:
+        round = df_filtered["round"].iloc[0]
+    except:
+        print("There are no rounds with incomplete games in the future. Defaulting to most recent completed round.")
+        df_except = df.loc[df["localtime"] < df["now_in_tz"]]
+        round = df_except["round"].iloc[-1]
+    return round

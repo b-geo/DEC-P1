@@ -84,7 +84,7 @@ def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: Post
         games_df = transform_games(games_data)
 
         #get what round we're in so that we only get games from the current round
-        round = current_round(games_df)
+        round = current_round(games_data)
         #extract odds data
         logger.info(f"Extracting odds data for season {this_year}, round {round}.")
         odds_data = extract_odds(squiggle_client,this_year,round)
@@ -120,17 +120,19 @@ def run(pipeline_name: str, pipeline_config: dict, postgres_logging_client: Post
         logger.info(f"Extracting summary query data from {SILVER_DATABASE_NAME}.")
         summary_template = environment.get_template("summary.sql")
         summary_data = extract_postgres(postgres_client=silver_postgres_client, sql_template=summary_template)
-        summary_df = pd.json_normalize(summary_data)
-
-        #load summary data to gold layer
-        logger.info(f"Loading summary data to {GOLD_DATABASE_NAME}.")
-        summary_loader = PostgresSqlLoader(gold_postgres_client)
-        summary_loader.load_summary(df=summary_df, load_method=pipeline_config.get("summary_load_method"))
+        if not summary_data:
+            # issue warning SQL query result is empty and don't update.
+            logger.warning(f"Query result from {SILVER_DATABASE_NAME} is empty.")
+        else:
+            #load summary data to gold layer
+            summary_df = pd.json_normalize(summary_data)
+            logger.info(f"Loading summary data to {GOLD_DATABASE_NAME}.")
+            summary_loader = PostgresSqlLoader(gold_postgres_client)
+            summary_loader.load_summary(df=summary_df, load_method=pipeline_config.get("summary_load_method"))
 
         metadata_logging.log(
         status=MetaDataLoggingStatus.RUN_SUCCESS, logs=pipeline_logging.get_logs()
         )
-
         print(f"Pipeline succeeded.")
     except Exception as e:
         print(f"Pipeline failed with exception {e}.")

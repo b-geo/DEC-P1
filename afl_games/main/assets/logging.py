@@ -7,6 +7,7 @@ from sqlalchemy import insert, select, func
 from main.connectors.postgresql import PostgreSqlClient
 
 class PipelineLogging:
+    """A logging class for logging to a .log file."""
     def __init__(
         self,
         pipeline_name: str,
@@ -26,13 +27,14 @@ class PipelineLogging:
             raise Exception("Failed to get log file.")
 
 class MetaDataLoggingStatus:
-    """Data class for log status"""
+    """A data class specifying statuses of the pipeline."""
 
     RUN_START = "start"
     RUN_SUCCESS = "success"
     RUN_FAILURE = "fail"
 
 class MetaDataLogging:
+    """A metadata logging class for logging the overall status of the pipeline and the logs of the pipeline."""
     def __init__(
         self,
         pipeline_name: str,
@@ -50,8 +52,8 @@ class MetaDataLogging:
             self.metadata,
             Column("pipeline_name", String, primary_key=True),
             Column("run_id", Integer, primary_key=True),
-            Column("timestamp", String, primary_key=True),
-            Column("status", String, primary_key=True),
+            Column("timestamp", String),
+            Column("status", String),
             Column("config", JSON),
             Column("logs", String),
         )
