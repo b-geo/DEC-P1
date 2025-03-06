@@ -52,8 +52,8 @@ class MetaDataLogging:
             self.metadata,
             Column("pipeline_name", String, primary_key=True),
             Column("run_id", Integer, primary_key=True),
-            Column("timestamp", String),
-            Column("status", String),
+            Column("timestamp", String, primary_key=True),
+            Column("status", String, primary_key=True),
             Column("config", JSON),
             Column("logs", String),
         )

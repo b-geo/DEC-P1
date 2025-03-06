@@ -38,14 +38,19 @@ The default implementation of this project is a Docker image deployed to Amazon 
 - **Squiggle API** for game data and odds data.
 - **Docker image** containing python code and the *player fantasy data* CSV.
 - **ECR** to store the Docker image.
-    {provide screenshot of ECR}
-- **ECS** to run the Docker image. This uses an **EC2** instance as the infrastructure.
-    {provide screenshot of ECR}
-- **S3** to store a `.env` file containing environment variables.
-    {provide screenshot of ECR}
-- **RDS** to run a PostgreSQL database instance.
-    {provide screenshot of ECR}
 
+    ![images/ecr.png](images/ecr.png)
+- **ECS** to run the Docker image. This uses an **EC2** instance as the infrastructure.
+    ![images/ecs.png](images/ecs.png)
+- **S3** to store a `.env` file containing environment variables.
+
+    ![images/s3.png](images/s3.png)
+- **RDS** to run a PostgreSQL database instance.
+
+    ![images/rds.png](images/rds.png)
+    ![images/postgres.png](images/postgres.png)
+
+### Architecture Diagram
 ![images/arc_diagram.png](images/arc_diagram.png)
 
 ### Entity Relationship Diagram
@@ -155,14 +160,14 @@ My project was broken down into blocks, based on the key requirements. These blo
 - **It is important to decide on the environent you will use**. This includes Python version and Python library versions. I was developing with a mix of two virtual environments that had different versions of Python and different versions of libraries. There had been fixes I had made to have both environments run the project locally but this created issues when creating a Docker image. Next time I will use a consistent develop environment with a requirements.txt from the start.
 - **Its is important to have a `.gitignore` from the beginning**. I didn't realise until half way through that my `.env` was being pushed to Github, as well as the `__pychache__` folders. These had to be removed from my Git respository before adding them to a `.gitignore` otherwise they wouldn't actually be ignored. Next time I will at least start with the templated `.gitignore` via Github.
 - **There are many ways to structure a project and it's important to plan**. I found myself changing the structural pattern of my project across files, folders, functions and classes and this was a result of starting to code before planning. By planning from the start I could've came up with a structural pattern that made sense - this would have saved me time.
-- **Just because you have a type hint, that doesn't mean that is actually the case**. Although it wasn't causing any errors, I realised some of my docstrings and type annotations were indicating what I expected the data types to be, but this wasn't actually the case. Next time I will test my functions for input and output types earlier to ensure what I am documenting is correct.
+- **A type hint isn't the same as forcing types**. Although it wasn't causing any errors, I realised some of my docstrings and type annotations were indicating what I expected the data types to be, but this wasn't actually the case. Next time I will test my functions for input and output types earlier to ensure what I am documenting is correct.
 
 ## How I would improve this project with more time
 
 - The addition of a Bronze layer database. It doesn't really make sense to just have Silver and Gold.
 - Data should ideally be served via a Telegram bot or something similar
-- My extract functions and Squiggle API class is specific in that it requires certain parameters such as year and round, but ideally I would make these for flexible.
-- My extract functions extract data but return a Panda Datafram which should probably be part of the transform function.
+- My extract functions and Squiggle API class is specific in that it requires certain parameters such as year and round, but ideally I would make these for flexible. For instance allowing past seasons and rounds.
+- My extract functions extract data but return a Panda Dataframe which should probably be part of the transform function.
 - More unit tests.
 - More try/except and exception handling.
 - Database tables currently include the date the data was last updated on Squiggle's end - which I fetch from the API. However, there is no column where I specify the date the row was last updated. This should be added.
