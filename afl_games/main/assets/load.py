@@ -16,18 +16,6 @@ class PostgresSqlLoader:
         table: Table,
         load_method: str = "overwrite",
     ) -> None:
-        """
-        Load dataframe to a database.
-
-        Args:
-            df: dataframe to load
-            self.client: postgresql client
-            table: sqlalchemy table
-            metadata: sqlalchemy metadata
-            load_method: supports one of: [insert, upsert, overwrite]
-        
-        Raises:
-        """
         if load_method == "insert":
             self.client.insert(
                 data=df.to_dict(orient="records"), table=table, metadata=self.metadata
